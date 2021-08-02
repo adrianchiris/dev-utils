@@ -17,3 +17,10 @@ when vagrant-libvirt is used, a sample network xml is provided (`vagrant-libvirt
 
 Vagrantfile may be changed to support other network configuration, however it was tested with the
 aforementioned network configuration.
+
+## Useful links
+- https://libvirt.org/formatnetwork.html
+- https://libvirt.org/formatnetwork.html#examples
+- https://computingforgeeks.com/using-vagrant-with-libvirt-on-linux/
+- https://libvirt.org/formatdomain.html#elementsNICSDirect
+- https://github.com/vagrant-libvirt/vagrant-libvirt#networks
