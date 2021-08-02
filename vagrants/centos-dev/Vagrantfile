@@ -1,0 +1,64 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+$script = <<-SCRIPT
+
+# nmcli device set eth1 managed no
+
+sudo yum update -yq
+sudo yum install cloud-utils-growpart -yq
+growpart /dev/vda 1
+xfs_growfs /dev/vda1
+
+sudo yum install -yq yum-utils git vim net-tools python3 jq make
+sudo yum group install "Development Tools" -yq
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+
+systemctl stop firewalld
+systemctl disable firewalld
+systemctl enable docker
+systemctl start docker
+
+# Install golang
+curl -Lo /tmp/go1.16.6.linux-amd64.tar.gz https://golang.org/dl/go1.16.6.linux-amd64.tar.gz
+tar -C /usr/local -xzf /tmp/go1.16.6.linux-amd64.tar.gz
+rm -f /tmp/go1.16.6.linux-amd64.tar.gz
+
+# Install KIND
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+chmod +x ./kind
+mv ./kind /usr/local/bin/kind
+
+# Install kubectl (last stable release)
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod 755 ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
+
+# Sort out pip softlinks needed for ovn-kubernetes KIND cluster setup
+ln -s /bin/pip3 /bin/pip
+
+# Add /usr/local/bin /usr/local/go/bin to path
+cat <<EOT >> /home/vagrant/.bash_profile
+PATH=$PATH:/usr/local/bin:/usr/local/go/bin
+export PATH
+
+# NOTE: you need to login into docker for image pull to work
+EOT
+SCRIPT
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/stream8"
+  #config.vm.network "private_network", ip: 192.168.121.10
+  #config.vm.network "public_network", dev: "eno1", mode: "bridge", type: "ethernet"
+  config.vm.define "kind-node" do |node|
+    node.vm.provision "shell", inline: $script
+    node.vm.provider "libvirt" do |v|
+      v.memory = 8000 
+      v.cpus = 4
+      v.machine_virtual_size = 32
+    end
+  end
+end
