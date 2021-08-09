@@ -16,16 +16,13 @@ init() {
 	if [[ -a "~/.git-completion.bash" ]]; then
 		source ~/.git-completion.bash
 	fi
-	# Git Aliases/Functions
+	# Setup useful git Aliases
 	alias gca='git commit --amend --no-edit'
 	alias gce='git commit --amend'
 	alias gri='git rebase --interactive $1'
 	alias grc='git rebase --continue'
 	alias gsp='git stash && git pull --rebase && git stash pop'
-	# Git Aliases/Functions for github
-	# Remotes: origin repository is named origin and forked repository is named forked
-	# in the porjects .gitconfig file
-	alias gpf='git push --force-with-lease forked `git rev-parse --abbrev-ref HEAD`'
+	alias gpf='git push --force-with-lease ${GS_REMOTE_FORKED} `git rev-parse --abbrev-ref HEAD`'
 }
 
 # git-checkout-pr checks out a PR from origin
@@ -64,7 +61,7 @@ git-branch-del() {
             git branch -D $var
             if [[ "$delete_remote" == true ]]; then # Delete remote branch as well
                     echo "Deleting branch $var from remote"
-                    git push ${GS_REMOTE_ORIGIN} --delete $var
+                    git push ${GS_REMOTE_FORKED} --delete $var
             fi
     done
 }
