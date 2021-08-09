@@ -65,3 +65,5 @@ git-branch-del() {
             fi
     done
 }
+
+init

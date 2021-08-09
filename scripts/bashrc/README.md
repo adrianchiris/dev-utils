@@ -14,11 +14,10 @@ describing the functions it exposes.
 - Function per desired functionality exposed to the user
 - Optionally a usage function per desired functionality may be added and invoked if the first
   argument is `-h`
-- No operations should be performed outside of a function's scope
+- No operations aside of init call should be performed outside of a function's scope
 
 ## Usage
 - Copy relevant scripts to your home directory
 - Edit `~/.bashrc` and source relevant scripts
-- for each script-module call its init() function
 - Happy hacking!
 
